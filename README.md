@@ -16,11 +16,14 @@ pip install -r requirements.txt
 ```python
 python main.py 20 30
 ```
+
 Для того чтобы запустить скрипт и вызвать необязательный аргумент:
 ```python
 python main.py 20 30 --skip_imgs
 ```python
+
 или
+
 ```python
 python main.py 20 30 --dest_folder media
 ```python
