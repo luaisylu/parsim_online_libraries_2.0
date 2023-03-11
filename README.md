@@ -20,13 +20,12 @@ python main.py 20 30
 Для того чтобы запустить скрипт и вызвать необязательный аргумент:
 ```python
 python main.py 20 30 --skip_imgs
-```python
-
+```
 или
 
 ```python
 python main.py 20 30 --dest_folder media
-```python
+```
 ### Цель проекта
 
 Код написан в образовательных целях на онлайн-курсе для веб-разработчиков [dvmn.org](https://dvmn.org/).
