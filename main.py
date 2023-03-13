@@ -74,8 +74,8 @@ def download_img(image_link, folder_images):
 
 
 def download_json(json_path, book):
-    with open(json_path, "w", encoding="utf-8") as my_file:
-        json.dump(book, my_file, ensure_ascii=False)
+    with open(json_path, "w", encoding="utf-8") as json_file:
+        json.dump(book, json_file, ensure_ascii=False)
 
       
 def main():
