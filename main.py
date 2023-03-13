@@ -38,7 +38,6 @@ def parse_book_page(response, book_page_url):
         "comments" : book_comments,
         "genres" : book_genres
     }
-    
     return book
 
 
@@ -124,7 +123,6 @@ def main():
         default="information"
     )
     args = parser.parse_args()
-    
     book_folder = os.path.join(args.dest_folder, "books")
     Path(book_folder).mkdir(parents=True, exist_ok=True)
 
