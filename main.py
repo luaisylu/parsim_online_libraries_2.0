@@ -29,7 +29,6 @@ def parse_book_page(response, book_page_url):
     book_comments = html_code.select(book_comments_selector)
     book_genres_selector = 'span.d_book a'
     book_genres = html_code.select(book_genres_selector)
-    
     book_comments = ''.join([comment.text for comment in book_comments])
     book_genres = ''.join([genre.text for genre in book_genres])
     book ={
@@ -46,18 +45,28 @@ def parse_book_page(response, book_page_url):
 def get_books_urls(args):
     book_urls  = []
     for page in range(args.start_page, args.end_page):
-        site_page_links = f"https://tululu.org/l55/{page}"
-        page_response = requests.get(site_page_links)
-        html_code = BeautifulSoup(page_response.text, 'lxml')
+        try:
+            site_page_links = f"https://tululu.org/l55/{page}"
+            page_response = requests.get(site_page_links)
+            check_for_redirect(page_response)
+            page_response.raise_for_status()
+            html_code = BeautifulSoup(page_response.text, 'lxml')
       
-        cards_html_code_selector = "table.d_book"
-        cards_html_code = html_code.select(cards_html_code_selector)
-        for card_html_code in cards_html_code:
-            book_id = card_html_code.find("a")["href"]
-            full_link = urljoin("https://tululu.org", book_id)
-            book_urls.append(full_link)
+            cards_html_code_selector = "table.d_book"
+            cards_html_code = html_code.select(cards_html_code_selector)
+            for card_html_code in cards_html_code:
+                book_id = card_html_code.find("a")["href"]
+                full_link = urljoin("https://tululu.org/l55/", book_id)
+                book_urls.append(full_link)
+        except requests.exceptions.HTTPError:
+            print("Такой книги нет", book_id)
+        except requests.exceptions.ValueError:
+            print("Ошибка кода")
+        except requests.exceptions.ConnectionError:
+            print("Ошибка соединения")
+            time.sleep(20)
     return book_urls
-
+        
 
 def download_txt(file_path, book_response):
     with open(file_path, 'wb') as file:
@@ -121,7 +130,7 @@ def main():
 
     images_folder = os.path.join(args.dest_folder, "image")
     Path(images_folder).mkdir(parents=True, exist_ok=True)
-    
+
     books_urls = get_books_urls(args)
     for book_url in books_urls:
         book_id = book_url.split("https://tululu.org/b")[1].split("/")[0]
@@ -136,13 +145,12 @@ def main():
             check_for_redirect(book_response)
             book_page_response = requests.get(book_page_url)
             book_page_response.raise_for_status()
-            
+            check_for_redirect(book_page_response)
             book = parse_book_page(book_page_response, book_page_url)
             book_name = book["title"]
             image_link = book["img_src"]
-            check_for_redirect(book_page_response)
             book["book_path"] = os.path.join(book_folder, book_name)
-            
+          
             if not args.skip_imgs:
                 download_img(image_link, images_folder)
             if not args.skip_txt:
@@ -150,9 +158,9 @@ def main():
             
         except requests.exceptions.HTTPError:
             print("Такой книги нет", book_id)
-        except ValueError:
+        except requests.exceptions.ValueError:
             print("Ошибка кода")
-        except ConnectionError:
+        except requests.exceptions.ConnectionError:
             print("Ошибка соединения")
             time.sleep(20)
         json_folder = args.json_path 
