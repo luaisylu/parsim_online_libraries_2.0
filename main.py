@@ -55,7 +55,7 @@ def get_books_urls(args):
             cards_html_code = html_code.select(cards_html_code_selector)
             for card_html_code in cards_html_code:
                 book_id = card_html_code.find("a")["href"]
-                full_link = urljoin("https://tululu.org/l55/", book_id)
+                full_link = urljoin("https://tululu.org", book_id)
                 book_urls.append(full_link)
         except requests.exceptions.HTTPError:
             print("Такой книги нет", book_id)
