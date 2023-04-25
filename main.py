@@ -59,8 +59,6 @@ def get_books_urls(args):
                 book_urls.append(full_link)
         except requests.exceptions.HTTPError:
             print("Такой книги нет", book_id)
-        except requests.exceptions.ValueError:
-            print("Ошибка кода")
         except requests.exceptions.ConnectionError:
             print("Ошибка соединения")
             time.sleep(20)
@@ -156,8 +154,6 @@ def main():
             
         except requests.exceptions.HTTPError:
             print("Такой книги нет", book_id)
-        except requests.exceptions.ValueError:
-            print("Ошибка кода")
         except requests.exceptions.ConnectionError:
             print("Ошибка соединения")
             time.sleep(20)
