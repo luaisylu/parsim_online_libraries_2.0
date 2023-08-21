@@ -128,6 +128,8 @@ def main():
     Path(images_folder).mkdir(parents=True, exist_ok=True)
 
     books_urls = get_books_urls(args)
+    books_info = []
+
     for book_url in books_urls:
         book_id = book_url.split("https://tululu.org/b")[1].split("/")[0]
         params ={
@@ -146,21 +148,21 @@ def main():
             book_name = book["title"]
             image_link = book["img_src"]
             book["book_path"] = os.path.join(book_folder, book_name)
-          
+            
             if not args.skip_imgs:
                 download_img(image_link, images_folder)
             if not args.skip_txt:
                 download_txt(book["book_path"], book_response)
-            
+            books_info.append(book)
         except requests.exceptions.HTTPError:
             print("Такой книги нет", book_id)
         except requests.exceptions.ConnectionError:
             print("Ошибка соединения")
             time.sleep(20)
-        json_folder = args.json_path 
-        Path(json_folder).mkdir(parents=True, exist_ok=True)
-        json_path = os.path.join(json_folder, "books_information.json")
-        download_json(json_path, book)
+    json_folder = args.json_path 
+    Path(json_folder).mkdir(parents=True, exist_ok=True)
+    json_path = os.path.join(json_folder, "books_information.json")
+    download_json(json_path, books_info)
 
         
 if __name__ == "__main__":  
