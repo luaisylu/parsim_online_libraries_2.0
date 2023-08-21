@@ -7,12 +7,13 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 import json
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from livereload import Server, shell
 
 
 
-
-
-
+def on_reload():
+    with open ('index.html', 'r', encoding="utf8") as file:
+        return file.read()
 
 
 def main():
@@ -31,17 +32,12 @@ def main():
     )
     with open('index.html', 'w', encoding="utf8") as file:
         file.write(rendered_page)
-
-    #template = books_information.get_template('template.html')
-    #rendered_page = template.render(
-        #age=find_date_foundation(),
-        #group_wines=split_file_into_categories()
-    #)
-    
-    #with open('index.html', 'w', encoding="utf8") as file:
-        #file.write(rendered_page)
+    server_change = Server()
+    server_change.watch('index.html', on_reload)
+    server_change.serve(root='.')
     server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
     server.serve_forever()
+    
  
 
 
